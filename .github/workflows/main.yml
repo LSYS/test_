@@ -36,3 +36,9 @@ jobs:
       - name: docstring
         run: |
           pydocstyle utilities.py
+      - name: isort
+        run: |
+          isort utilities.py
+      - name: black
+        run: |
+          black -l 88 utilities.py          
