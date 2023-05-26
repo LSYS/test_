@@ -17,7 +17,6 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import json
-from pprint import pprint
 
 
 def save_mpl_fig(
