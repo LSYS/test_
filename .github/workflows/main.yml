@@ -32,13 +32,13 @@ jobs:
           scripts/utilities.py
       - name: pyflakes
         run: |
-          pyflakes utilities.py
+          pyflakes scripts/utilities.py
       - name: docstring
         run: |
-          pydocstyle utilities.py
+          pydocstyle scripts/utilities.py
       - name: isort
         run: |
-          isort utilities.py
+          isort scripts/utilities.py
       - name: black
         run: |
-          black -l 88 utilities.py          
+          black -l 88 scripts/utilities.py          
