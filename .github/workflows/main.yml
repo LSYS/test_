@@ -30,3 +30,9 @@ jobs:
           --check-untyped-defs \
           --exclude=.*__init__\.py$ \
           scripts/utilities.py
+      - name: pyflakes
+        run: |
+          pyflakes utilities.py
+      - name: docstring
+        run: |
+          pydocstyle utilities.py
