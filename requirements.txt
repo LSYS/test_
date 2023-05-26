@@ -1,0 +1,23 @@
+pandas==2.0.0rc0
+pyarrow
+pyjanitor
+openpyxl
+matplotlib
+seaborn
+runpynb
+lexicalrichness
+forestplot
+jupyter
+notebook==6.4.8
+jupyter_contrib_nbextensions
+jupyter_nbextensions_configurator
+jupyterthemes
+tqdm
+watermark
+
+# dev
+black
+pyflakes
+mypy
+pydocstyle
+isort
