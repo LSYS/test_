@@ -9,14 +9,15 @@
 * save_json
 * read_json
 * read_jsons
+* get_datestr_list
 """
-from typing import Any, Iterable, Optional
-from typing import Dict
-
+import json
 import os
+from datetime import datetime, timedelta
+from typing import Any, Dict, Iterable, List, Optional
+
 import matplotlib.pyplot as plt
 import pandas as pd
-import json
 
 
 def save_mpl_fig(
@@ -138,6 +139,10 @@ def save_excelsheet(
     Returns
     -------
     None
+
+    Example
+    -------
+    save_excelsheet("sheet.xlsx", "sheet1", df)
     """
     try:
         with pd.ExcelWriter(filepath, mode="a", if_sheet_exists="replace") as writer:
@@ -169,6 +174,10 @@ def pandas_to_tex(
     Returns
     -------
     None
+
+    Example
+    -------
+    pandas_to_tex(df, "mytable", index=False)
     """
     if texfile.split(".")[-1] != ".tex":
         texfile += ".tex"
@@ -206,7 +215,7 @@ def pprint_dict(data: Dict, indent: int = 2) -> None:
     ...     "age": 30,
     ...     "city": "New York"
     ... }
-    >>> pretty_print_dict(sample_dict)
+    >>> pprint_dict(sample_dict)
     {
       "name": "John Doe",
       "age": 30,
@@ -221,7 +230,7 @@ def pprint_dict(data: Dict, indent: int = 2) -> None:
 
     # Pretty print the JSON data
     print(json_data)
-    
+
     return None
 
 
@@ -239,8 +248,25 @@ def save_json(data, savepath):
     Returns
     -------
     None
-    """    
-    if savepath.split(".")[-1] != ".json":
+
+    Example
+    -------
+    >>> import json
+    >>> # Define the JSON data and save path
+    >>> json_data = {"name": "John", "age": 30}
+    >>> json_file = "example.json"
+    >>> # Call the function to save the JSON object
+    >>> save_json(json_data, json_file)
+    >>> # Read the saved JSON file
+    >>> with open(json_file) as f:
+    ...     saved_data = json.load(f)
+    >>> saved_data
+    {'name': 'John', 'age': 30}
+    >>> # Clean up the temporary file
+    >>> import os
+    >>> os.remove(json_file)
+    """
+    if savepath.split(".")[-1] != "json":
         savepath += ".json"
     with open(savepath, "w") as file:
         json.dump(data, file)
@@ -260,17 +286,28 @@ def read_json(file_path: str) -> dict:
     Dict
         The contents of the JSON file as a dictionary.
 
-    Raises:
+    Raises
+    ------
         FileNotFoundError: If the file specified by file_path does not exist.
         json.JSONDecodeError: If the JSON file is malformed.
 
-    Example:
-        >>> data = read_json_file('data.json')
-        >>> print(data['key_name'])
-        value
+    Example
+    -------
+    >>> import json
+    >>> # Create a temporary JSON file for testing
+    >>> json_data = {"name": "John", "age": 30}
+    >>> json_file = "example.json"
+    >>> with open(json_file, "w") as f:
+    ...     json.dump(json_data, f)
+    >>> # Call the function to read the JSON file
+    >>> read_json(json_file)
+    {'name': 'John', 'age': 30}
+    >>> # Clean up the temporary file
+    >>> import os
+    >>> os.remove(json_file)
     """
     if file_path.split(".")[-1] != "json":
-        file_path += ".json"    
+        file_path += ".json"
     with open(file_path) as file:
         data = json.load(file)
     return data
@@ -301,13 +338,62 @@ def read_jsons(directory: str, extension: str = ".json") -> list:
 
     Example
     -------
-    >>> data_list = read_json_files_from_directory('json_files')
-    >>> print(data_list[0]['key_name'])
-    value
+    >>> import os
+    >>> import json
+    >>> # Create a temporary directory and JSON file for testing
+    >>> temp_dir = "temp_directory"
+    >>> os.mkdir(temp_dir)
+    >>> json_data = {"name": "John", "age": 30}, {"name": "Alice", "age": 25}
+    >>> json_file = os.path.join(temp_dir, "example.json")
+    >>> with open(json_file, "w") as f:
+    ...     json.dump(json_data, f)
+    >>> # Call the function to read the JSON files
+    >>> read_jsons(temp_dir)
+    [[{'name': 'John', 'age': 30}, {'name': 'Alice', 'age': 25}]]
+    >>> # Clean up the temporary directory and file
+    >>> os.remove(json_file)
+    >>> os.rmdir(temp_dir)
     """
     data_list = []
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         if os.path.isfile(file_path) and filename.endswith(extension):
-                data_list.append(read_json(file_path))
+            data_list.append(read_json(file_path))
     return data_list
+
+
+def get_datestr_list(start_date: str, end_date: str) -> List[str]:
+    """Generate a list of dates in string format between two specified dates.
+
+    Parameters
+    ----------
+    start_date : str
+        The start date in the format 'YYYY-MM-DD'.
+    end_date : str
+        The end date in the format 'YYYY-MM-DD'.
+
+    Returns
+    -------
+    List[str]
+        A list of dates in string format between the start and end dates (inclusive).
+
+    Example
+    -------
+    >>> start_date = "2022-01-01"
+    >>> end_date = "2022-01-05"
+    >>> dates = get_datestr_list(start_date, end_date)
+    >>> print(dates)
+    ['2022-01-01', '2022-01-02', '2022-01-03', '2022-01-04', '2022-01-05']
+    """
+    dates = []
+    date_format = "%Y-%m-%d"
+
+    start = datetime.strptime(start_date, date_format)
+    end = datetime.strptime(end_date, date_format)
+
+    current_date = start
+    while current_date <= end:
+        dates.append(current_date.strftime(date_format))
+        current_date += timedelta(days=1)
+
+    return dates
