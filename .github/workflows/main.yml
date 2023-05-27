@@ -41,4 +41,7 @@ jobs:
           isort scripts/utilities.py
       - name: black
         run: |
-          black -l 88 scripts/utilities.py          
+          black -l 88 scripts/utilities.py       
+      - name: doctest
+        run: |
+          python -m doctest -v scripts/utilities.py
